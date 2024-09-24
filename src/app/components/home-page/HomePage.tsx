@@ -3,7 +3,7 @@ import { formSchema } from '@/utils/schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Image from 'next/image'
 import React from 'react'
-import { useForm } from 'react-hook-form'
+import { SubmitHandler, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import heroImage from '@/assets/img/paws-img.png'
 import logo from '@/assets/img/logo.png'
@@ -19,7 +19,8 @@ const HomePage = () => {
   } = useForm<FormDataType>({
     resolver: zodResolver(formSchema),
   })
-  const onSubmit = (data: any) => {
+
+  const onSubmit: SubmitHandler<FormDataType> = (data) => {
     console.log('Waitlist Data Submitted:', data)
     alert('Thank you! You are now on the waitlist.')
   }
@@ -172,11 +173,11 @@ const HomePage = () => {
           <p className='mb-10 mx-auto'>
             At Twisty Tails, we believe that finding the perfect breeding
             partner for your dog should be simple, secure, and enjoyable.
-            Whether you're a professional breeder or a passionate dog owner, our
-            platform is designed to make your journey seamless.
+            Whether you&apos;re a professional breeder or a passionate dog
+            owner, our platform is designed to make your journey seamless.
           </p>
-          {list.map(({ preamble, text }) => (
-            <li>
+          {list.map(({ preamble, text }, index) => (
+            <li key={index}>
               <span className='font-semibold'>{preamble}</span> {text}
             </li>
           ))}
