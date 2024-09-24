@@ -40,7 +40,7 @@ const HomePage = () => {
   ]
   return (
     <div className='min-h-screen flex flex-col items-center bg-background pt-20'>
-      <section className='w-full text-center py-16'>
+      <section className='w-full text-center py-16 px-5'>
         <div className='flex justify-center mb-10 '>
           <Image alt='logo-img' className='swing' src={logo} />
         </div>
@@ -165,7 +165,7 @@ const HomePage = () => {
         id='about'
         className='w-full py-16 mb-10 bg-foreground/10 text-black'
       >
-        <ul className='flex flex-col gap-2 max-w-xl mx-auto'>
+        <ul className='flex flex-col gap-2 max-w-xl mx-auto px-5'>
           <h3 className='text-xl font-semibold mb-4 text-white'>
             About Twisty Tails
           </h3>
