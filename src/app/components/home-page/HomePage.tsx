@@ -1,28 +1,40 @@
 'use client'
-import { formSchema } from '@/utils/schema'
-import { zodResolver } from '@hookform/resolvers/zod'
 import Image from 'next/image'
-import React from 'react'
-import { SubmitHandler, useForm } from 'react-hook-form'
-import { z } from 'zod'
+import React, { useState } from 'react'
 import heroImage from '@/assets/img/paws-img.png'
 import logo from '@/assets/img/logo.png'
 import paw3 from '@/assets/img/paw3.png'
 import paw4 from '@/assets/img/paw4.png'
+import toast from 'react-hot-toast'
+import { Spinner } from '@/assets/icons/Spinner'
 
-type FormDataType = z.infer<typeof formSchema>
 const HomePage = () => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<FormDataType>({
-    resolver: zodResolver(formSchema),
-  })
+  const [data, setData] = useState({ name: '', email: '' })
+  const [loading, setLoading] = useState(false)
 
-  const onSubmit: SubmitHandler<FormDataType> = (data) => {
-    console.log('Waitlist Data Submitted:', data)
-    alert('Thank you! You are now on the waitlist.')
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    setLoading(true)
+    try {
+      const response = await fetch('https://getlaunchlist.com/s/QoSyCe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          name: data.name,
+          email: data.email,
+        }),
+      })
+      if (response.ok) {
+        toast.success('Thank you! You are now on the waitlist.')
+      }
+    } catch (error) {
+      toast.error('Oops! Something went wrong. Please try again later.')
+    } finally {
+      setData({ name: '', email: '' })
+      setLoading(false)
+    }
   }
 
   const list = [
@@ -73,7 +85,7 @@ const HomePage = () => {
         <h2 className='text-2xl font-semibold text-center mb-6 text-textShade'>
           Join the Waitlist
         </h2>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={onSubmit}>
           <div className='mb-4'>
             <label
               className='block text-sm text-textShade/75 font-medium mb-2'
@@ -83,15 +95,12 @@ const HomePage = () => {
             </label>
             <input
               id='name'
-              {...register('name', { required: 'Name is required' })}
+              value={data.name}
+              onChange={(e) => setData({ ...data, name: e.target.value })}
               className='w-full border border-gray-300 rounded-md px-4 py-2 text-black'
               placeholder='Enter your full name'
+              name='name'
             />
-            {errors.name && (
-              <span className='text-red-500 text-sm'>
-                {errors.name.message}
-              </span>
-            )}
           </div>
 
           <div className='mb-4'>
@@ -104,41 +113,25 @@ const HomePage = () => {
             <input
               id='email'
               type='email'
-              {...register('email')}
+              value={data.email}
+              onChange={(e) => setData({ ...data, email: e.target.value })}
               className='w-full border border-gray-300 rounded-md px-4 py-2 text-black'
               placeholder='Enter your email address'
+              name='email'
             />
-            {errors.email && (
-              <span className='text-red-500 text-sm'>
-                {errors.email.message}
-              </span>
-            )}
           </div>
-
-          {/* <div className='mb-4'>
-            <label
-              className='block text-sm text-textShade/75 font-medium mb-2'
-              htmlFor='breed'
-            >
-              Interested Breed
-            </label>
-            <select
-              id='breed'
-              {...register('breed')}
-              className='w-full border border-gray-300 rounded-md px-4 py-2'
-            >
-              <option value=''>Select Breed</option>
-              <option value='beagle'>Beagle</option>
-              <option value='golden-retriever'>Golden Retriever</option>
-              <option value='shepherd'>Shepherd</option>
-            </select>
-          </div> */}
 
           <button
             type='submit'
-            className='w-full bg-teal-500 text-white py-2 px-4 rounded-md hover:bg-teal-600'
+            disabled={loading}
+            className='w-full flex justify-center gap-2 items-center bg-teal-500 text-white py-2 px-4 rounded-md hover:bg-teal-600'
           >
-            Join the Waitlist
+            Join the Waitlist{' '}
+            {loading && (
+              <span className='animate-spin '>
+                <Spinner />
+              </span>
+            )}
           </button>
         </form>
 
@@ -189,7 +182,6 @@ const HomePage = () => {
         </ul>
       </section>
 
-      {/* Footer Section */}
       <footer className='w-full py-5 bg-blue-100 text-center'>
         <p className='text-gray-600'>
           © 2024 Twisty Tails. All rights reserved.
