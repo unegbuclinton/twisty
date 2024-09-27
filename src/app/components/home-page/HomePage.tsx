@@ -12,7 +12,7 @@ const HomePage = () => {
   const [data, setData] = useState({ name: '', email: '' })
   const [loading, setLoading] = useState(false)
 
-  const onSubmit = async (e: any) => {
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setLoading(true)
     try {
